@@ -1,0 +1,32 @@
+# Environment and secrets
+.env
+secrets/*.json
+!secrets/.gitkeep
+
+# Runtime data
+data/seen_listings.json
+data/rule_batch_state.json
+data/mercari_spike_sample.html
+data/*.tmp
+logs/*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+venv/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

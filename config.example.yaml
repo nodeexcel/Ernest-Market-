@@ -1,0 +1,22 @@
+rules:
+  - keyword: "Dexcom G7 sensor"
+    max_price: 27
+    min_price: 8
+    marketplace: ebay
+    match_in: title
+    exclude_words:
+      - "expired"
+      - "opened"
+      - "damaged"
+      - "short dated"
+      - "empty"
+      - "for parts"
+
+  - keyword: "Omnipod 5"
+    max_price: 81
+    min_price: 25
+    match_in: title
+    exclude_words:
+      - "expired"
+      - "opened"
+      - "damaged"
