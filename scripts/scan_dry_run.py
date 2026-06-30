@@ -45,7 +45,7 @@ def main() -> int:
 
     try:
         settings = load_settings()
-        config = load_config(settings.config_path, mirror_mercari=settings.mercari_enabled)
+        config = load_config(settings.config_path)
     except (SettingsError, ConfigError) as exc:
         print(f"Configuration error: {exc}", file=sys.stderr)
         return 1

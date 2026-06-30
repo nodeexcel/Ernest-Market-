@@ -222,39 +222,7 @@ Batch position is stored in `data/rule_batch_state.json` and advances automatica
 
 ---
 
-## Step 7 — Mercari (RapidAPI)
-
-Mercari has no official public search API. This project uses **RapidAPI mercari-item-search**.
-
-### Manual steps
-
-1. Create a free account at [RapidAPI](https://rapidapi.com/)
-2. Open [mercari-item-search API](https://rapidapi.com/k19862217/api/mercari-item-search)
-3. Click **Subscribe to Test** (pick Basic/Free or paid plan)
-4. Copy your **X-RapidAPI-Key** from the API dashboard
-5. Update `.env`:
-
-```env
-MERCARI_ENABLED=true
-RAPIDAPI_KEY=your_rapidapi_key
-RAPIDAPI_MERCARI_HOST=mercari-item-search.p.rapidapi.com
-```
-
-When `MERCARI_ENABLED=true`, each eBay rule in `config.yaml` is automatically mirrored as a Mercari rule (39 → 78 rules total).
-
-### Test Mercari
-
-```powershell
-python scripts\test_mercari.py --keyword "dexcom" --limit 5
-python main.py --check
-python main.py --once
-```
-
-Alerts will show `Mercari Match:` in Telegram and a **Marketplace** column in Google Sheets.
-
----
-
-## Step 8 — Client handoff (Ernest)
+## Step 7 — Client handoff (Ernest)
 
 Deliver to client **without**:
 - Your `.env`

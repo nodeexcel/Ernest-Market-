@@ -1,11 +1,10 @@
 # Ernest Market
 
-Production-grade Python automation that monitors **eBay** and **Mercari** listings against configurable buy rules and sends qualified deals to **Telegram** and **Google Sheets**.
+Production-grade Python automation that monitors **eBay** listings against configurable buy rules and sends qualified deals to **Telegram** and **Google Sheets**.
 
 ## Features
 
 - Official **eBay Browse API** or **ScraperAPI** (switch via `EBAY_BACKEND` in `.env`)
-- **Mercari** search via **RapidAPI** (`MERCARI_ENABLED=true`)
 - Keyword + min/max price filtering from `config.yaml`
 - Exclude-word filtering (e.g. "broken", "for parts")
 - Deduplication via local JSON state (no database)
@@ -14,6 +13,7 @@ Production-grade Python automation that monitors **eBay** and **Mercari** listin
 - Rotating file logs
 - Single-run mode for Task Scheduler (`--once`)
 - Loop mode for continuous polling
+- **React dashboard** (`frontend/`) with FastAPI wrapper (`api/`) — see [FRONTEND.md](FRONTEND.md)
 
 ## Requirements
 
@@ -187,5 +187,5 @@ rules:
 
 ## Phase 1 scope
 
-- eBay + Mercari (set `MERCARI_ENABLED=true` and `RAPIDAPI_KEY` in `.env`)
+- eBay marketplace monitoring only
 - No PostgreSQL, no AI, no Sentry

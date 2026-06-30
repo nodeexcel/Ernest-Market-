@@ -74,8 +74,6 @@ class SheetsLogger:
         return worksheet
 
     def _default_headers(self) -> tuple[str, ...]:
-        if self._settings.mercari_enabled:
-            return SHEET_HEADERS
         return LEGACY_SHEET_HEADERS
 
     def _ensure_headers(self, worksheet: gspread.Worksheet) -> HeaderFormat:

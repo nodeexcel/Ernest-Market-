@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-VALID_MARKETPLACES = frozenset({"ebay", "mercari"})
+VALID_MARKETPLACES = frozenset({"ebay"})
 
 
 @dataclass(frozen=True)
@@ -21,7 +21,7 @@ class Listing:
     def __post_init__(self) -> None:
         if self.marketplace not in VALID_MARKETPLACES:
             raise ValueError(
-                f"Invalid marketplace {self.marketplace!r}. Use 'ebay' or 'mercari'."
+                f"Invalid marketplace {self.marketplace!r}. Use 'ebay'."
             )
 
     @property

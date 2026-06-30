@@ -9,7 +9,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 VALID_EBAY_BACKENDS = frozenset({"official", "scraperapi"})
-DEFAULT_RAPIDAPI_MERCARI_HOST = "mercari-item-search.p.rapidapi.com"
 
 
 class SettingsError(ValueError):
@@ -67,9 +66,6 @@ class Settings(EbaySettings):
     google_credentials_path: Path
     poll_interval_minutes: int
     max_alerts_per_run: int
-    mercari_enabled: bool
-    rapidapi_key: str | None
-    rapidapi_mercari_host: str
 
 
 def _require(name: str) -> str:
@@ -117,13 +113,6 @@ def _optional_float(name: str, default: float, *, minimum: float = 0.0) -> float
     if value < minimum:
         raise SettingsError(f"{name} must be >= {minimum}, got {value}")
     return value
-
-
-def _optional_bool(name: str, default: bool) -> bool:
-    raw = os.getenv(name, "").strip().lower()
-    if not raw:
-        return default
-    return raw in {"1", "true", "yes", "on"}
 
 
 def _load_common_paths() -> tuple[Path, Path, Path, Path, str, int]:
@@ -187,11 +176,6 @@ def load_settings(env_file: str | Path | None = ".env") -> Settings:
     ebay = load_ebay_settings(env_file=None)
     _, _, _, google_credentials_path, _, _ = _load_common_paths()
 
-    mercari_enabled = _optional_bool("MERCARI_ENABLED", False)
-    rapidapi_key: str | None = None
-    if mercari_enabled:
-        rapidapi_key = _require("RAPIDAPI_KEY")
-
     return Settings(
         ebay_backend=ebay.ebay_backend,
         scraperapi_key=ebay.scraperapi_key,
@@ -214,10 +198,4 @@ def load_settings(env_file: str | Path | None = ".env") -> Settings:
         google_credentials_path=google_credentials_path,
         poll_interval_minutes=_optional_int("POLL_INTERVAL_MINUTES", 5),
         max_alerts_per_run=_optional_nonneg_int("MAX_ALERTS_PER_RUN", 20),
-        mercari_enabled=mercari_enabled,
-        rapidapi_key=rapidapi_key,
-        rapidapi_mercari_host=os.getenv(
-            "RAPIDAPI_MERCARI_HOST", DEFAULT_RAPIDAPI_MERCARI_HOST
-        ).strip()
-        or DEFAULT_RAPIDAPI_MERCARI_HOST,
     )

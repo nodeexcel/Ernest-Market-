@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Monitor eBay and Mercari listings and alert qualified deals to Telegram and Google Sheets.",
+        description="Monitor eBay listings and alert qualified deals to Telegram and Google Sheets.",
     )
     parser.add_argument(
         "--once",
@@ -56,7 +56,7 @@ def main() -> int:
 
     try:
         settings = load_settings()
-        config = load_config(settings.config_path, mirror_mercari=settings.mercari_enabled)
+        config = load_config(settings.config_path)
     except (SettingsError, ConfigError) as exc:
         print(f"Configuration error: {exc}", file=sys.stderr)
         return 1

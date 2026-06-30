@@ -164,18 +164,4 @@ class ScanPipeline:
         self._telegram.send_test_message()
         logger.info("Running Google Sheets connectivity check...")
         self._sheets.append_test_row()
-        if self._settings.mercari_enabled:
-            logger.info("Running Mercari RapidAPI connectivity check...")
-            self._run_mercari_check()
         logger.info("Connectivity checks passed.")
-
-    def _run_mercari_check(self) -> None:
-        from src.mercari_rapidapi_client import MercariRapidApiClient
-
-        client = MercariRapidApiClient(self._settings)
-        probe_rule = BuyRule(keyword="dexcom", max_price=50.0, min_price=1.0, marketplace="mercari")
-        listings = client.search_rule(probe_rule, max_results=1)
-        if not listings:
-            logger.warning("Mercari connectivity check returned 0 listings (API reachable).")
-        else:
-            logger.info("Mercari connectivity check returned %d listing(s).", len(listings))

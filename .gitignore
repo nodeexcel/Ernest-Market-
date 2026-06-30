@@ -6,7 +6,7 @@ secrets/*.json
 # Runtime data
 data/seen_listings.json
 data/rule_batch_state.json
-data/mercari_spike_sample.html
+data/scan_history.json
 data/*.tmp
 logs/*.log
 
@@ -20,6 +20,10 @@ dist/
 build/
 venv/
 .venv/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
 
 # IDE
 .idea/

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -43,7 +42,7 @@ class BuyRule:
             )
         if self.marketplace not in VALID_MARKETPLACES:
             raise ConfigError(
-                f"marketplace must be one of {sorted(VALID_MARKETPLACES)} for keyword {self.keyword!r}."
+                f"marketplace must be 'ebay' for keyword {self.keyword!r}."
             )
 
 
@@ -75,6 +74,10 @@ def _parse_rule(raw: dict[str, Any], index: int) -> BuyRule:
         exclude_words = [str(word).strip().lower() for word in exclude_raw if str(word).strip()]
 
     marketplace = str(raw.get("marketplace", "ebay")).strip().lower()
+    if marketplace != "ebay":
+        raise ConfigError(
+            f"Only eBay is supported. Rule {keyword!r} has marketplace={marketplace!r}."
+        )
 
     return BuyRule(
         keyword=keyword,
@@ -82,31 +85,11 @@ def _parse_rule(raw: dict[str, Any], index: int) -> BuyRule:
         min_price=min_price,
         match_in=str(raw.get("match_in", "title")).strip().lower(),
         exclude_words=exclude_words,
-        marketplace=marketplace,
+        marketplace="ebay",
     )
 
 
-def _mirror_mercari_rules(rules: list[BuyRule]) -> list[BuyRule]:
-    """Duplicate eBay rules as Mercari rules for dual-marketplace scanning."""
-    expanded: list[BuyRule] = []
-    for rule in rules:
-        expanded.append(rule)
-        if rule.marketplace != "ebay":
-            continue
-        expanded.append(
-            BuyRule(
-                keyword=rule.keyword,
-                max_price=rule.max_price,
-                min_price=rule.min_price,
-                match_in=rule.match_in,
-                exclude_words=list(rule.exclude_words),
-                marketplace="mercari",
-            )
-        )
-    return expanded
-
-
-def load_config(path: Path, *, mirror_mercari: bool | None = None) -> AppConfig:
+def load_config(path: Path) -> AppConfig:
     """Load and validate buy rules from a YAML file."""
     if not path.exists():
         raise ConfigError(
@@ -126,14 +109,4 @@ def load_config(path: Path, *, mirror_mercari: bool | None = None) -> AppConfig:
         raise ConfigError("'rules' must be a list.")
 
     rules = [_parse_rule(item, index) for index, item in enumerate(rules_raw)]
-
-    if mirror_mercari is None:
-        mirror_mercari = os.getenv("MERCARI_ENABLED", "false").strip().lower() in {
-            "1",
-            "true",
-            "yes",
-        }
-    if mirror_mercari:
-        rules = _mirror_mercari_rules(rules)
-
     return AppConfig(rules=rules)

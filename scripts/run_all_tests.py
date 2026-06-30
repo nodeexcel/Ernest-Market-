@@ -205,41 +205,18 @@ def main() -> int:
         ("test_state.py", "Dedupe state (offline)"),
         ("test_rule_batch.py", "Rule batch rotation (offline)"),
         ("test_telegram_retry.py", "Telegram 429 parsing (offline)"),
-        ("test_mercari_parse.py", "Mercari parser (offline)"),
         ("test_ebay.py", "eBay search live"),
-        ("test_mercari.py", "Mercari RapidAPI live"),
         ("test_telegram.py", "Telegram live"),
         ("test_sheets.py", "Google Sheets live"),
     ]
 
-    env_values = _load_env_values()
-    mercari_enabled = env_values.get("MERCARI_ENABLED", "false").strip().lower() in {
-        "1",
-        "true",
-        "yes",
-    }
-
     print()
     print("--- Script tests ---")
     for script, label in script_tests:
-        if script == "test_mercari.py" and not mercari_enabled:
-            report.add(
-                CheckResult(
-                    label,
-                    True,
-                    "Skipped — set MERCARI_ENABLED=true and RAPIDAPI_KEY to test.",
-                )
-            )
-            continue
         ok, tail = _run_script(script)
         manual = None
         if not ok and script == "test_ebay.py":
             manual = "Check SCRAPERAPI_KEY (scraperapi) or EBAY_CLIENT_ID/SECRET (official) in .env."
-        elif not ok and script == "test_mercari.py":
-            manual = (
-                "Subscribe at https://rapidapi.com/k19862217/api/mercari-item-search, "
-                "set MERCARI_ENABLED=true and RAPIDAPI_KEY in .env."
-            )
         elif not ok and script == "test_telegram.py":
             manual = "Create bot via @BotFather, add bot as admin to private channel, set TELEGRAM_BOT_TOKEN and TELEGRAM_CHANNEL_ID."
         elif not ok and script == "test_sheets.py":
