@@ -68,7 +68,9 @@ export default function DashboardPage() {
           <div>
             <p className="font-semibold">Unable to load dashboard</p>
             <p className="mt-1 text-sm">{error.message}</p>
-            <p className="mt-2 text-sm">Make sure the API server is running on port 8000.</p>
+            <p className="mt-2 text-sm">
+              Check that the API server is running and reachable.
+            </p>
           </div>
         </div>
       </Card>

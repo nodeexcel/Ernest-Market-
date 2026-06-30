@@ -1,0 +1,49 @@
+nohup: ignoring input
+2026-06-30 14:20:03,870 | INFO     | src.state | Loaded 53 seen listing ID(s) from data/seen_listings.json.
+2026-06-30 14:20:03,870 | INFO     | src.pipeline | Scanning rule batch: 8 of 39 rule(s), starting at index 24.
+2026-06-30 14:20:03,870 | INFO     | src.pipeline | Scanning rule 25/39 [ebay]: keyword='FreeStyle test strips 50', max_price=7.00
+2026-06-30 14:20:03,871 | INFO     | src.ebay_scraper_client | ScraperAPI fetching eBay search for keyword='FreeStyle test strips 50'
+2026-06-30 14:20:03,871 | INFO     | src.scraperapi_fetch | ScraperAPI fetching https://www.ebay.com/sch/i.html?_nkw=FreeStyle+test+strips+50&_sacat=0&_udhi=7.0&_udlo=2.0 (render=False, premium=False, ultra_premium=False)
+2026-06-30 14:20:06,849 | INFO     | src.ebay_scraper_client | ScraperAPI search for 'FreeStyle test strips 50' returned 0 parsed listing(s).
+2026-06-30 14:20:06,849 | INFO     | src.filter | Filter for 'FreeStyle test strips 50': 0/0 listing(s) qualified.
+2026-06-30 14:20:07,850 | INFO     | src.pipeline | Scanning rule 26/39 [ebay]: keyword='Contour test strips 100', max_price=19.00
+2026-06-30 14:20:07,850 | INFO     | src.ebay_scraper_client | ScraperAPI fetching eBay search for keyword='Contour test strips 100'
+2026-06-30 14:20:07,850 | INFO     | src.scraperapi_fetch | ScraperAPI fetching https://www.ebay.com/sch/i.html?_nkw=Contour+test+strips+100&_sacat=0&_udhi=19.0&_udlo=5.0 (render=False, premium=False, ultra_premium=False)
+2026-06-30 14:20:32,349 | INFO     | src.ebay_scraper_client | ScraperAPI search for 'Contour test strips 100' returned 50 parsed listing(s).
+2026-06-30 14:20:32,350 | INFO     | src.filter | Filter for 'Contour test strips 100': 1/50 listing(s) qualified.
+2026-06-30 14:20:34,359 | INFO     | src.notifier_telegram | Telegram alert sent for item 398101403292.
+2026-06-30 14:20:35,647 | INFO     | src.sheets_logger | Initialized Google Sheet headers.
+2026-06-30 14:20:35,891 | INFO     | src.sheets_logger | Google Sheet row appended for item 398101403292.
+2026-06-30 14:20:36,891 | INFO     | src.pipeline | Scanning rule 27/39 [ebay]: keyword='Contour Next 100', max_price=12.00
+2026-06-30 14:20:36,892 | INFO     | src.ebay_scraper_client | ScraperAPI fetching eBay search for keyword='Contour Next 100'
+2026-06-30 14:20:36,892 | INFO     | src.scraperapi_fetch | ScraperAPI fetching https://www.ebay.com/sch/i.html?_nkw=Contour+Next+100&_sacat=0&_udhi=12.0&_udlo=3.0 (render=False, premium=False, ultra_premium=False)
+2026-06-30 14:20:39,518 | INFO     | src.ebay_scraper_client | ScraperAPI search for 'Contour Next 100' returned 18 parsed listing(s).
+2026-06-30 14:20:39,519 | INFO     | src.filter | Filter for 'Contour Next 100': 0/18 listing(s) qualified.
+2026-06-30 14:20:40,519 | INFO     | src.pipeline | Scanning rule 28/39 [ebay]: keyword='Contour Next 50', max_price=6.00
+2026-06-30 14:20:40,519 | INFO     | src.ebay_scraper_client | ScraperAPI fetching eBay search for keyword='Contour Next 50'
+2026-06-30 14:20:40,519 | INFO     | src.scraperapi_fetch | ScraperAPI fetching https://www.ebay.com/sch/i.html?_nkw=Contour+Next+50&_sacat=0&_udhi=6.0&_udlo=2.0 (render=False, premium=False, ultra_premium=False)
+2026-06-30 14:20:42,501 | INFO     | src.ebay_scraper_client | ScraperAPI search for 'Contour Next 50' returned 4 parsed listing(s).
+2026-06-30 14:20:42,501 | INFO     | src.filter | Filter for 'Contour Next 50': 1/4 listing(s) qualified.
+2026-06-30 14:20:44,238 | INFO     | src.notifier_telegram | Telegram alert sent for item 397144046283.
+2026-06-30 14:20:44,492 | INFO     | src.sheets_logger | Google Sheet row appended for item 397144046283.
+2026-06-30 14:20:45,492 | INFO     | src.pipeline | Scanning rule 29/39 [ebay]: keyword='Contour Next 70', max_price=4.00
+2026-06-30 14:20:45,492 | INFO     | src.ebay_scraper_client | ScraperAPI fetching eBay search for keyword='Contour Next 70'
+2026-06-30 14:20:45,492 | INFO     | src.scraperapi_fetch | ScraperAPI fetching https://www.ebay.com/sch/i.html?_nkw=Contour+Next+70&_sacat=0&_udhi=4.0&_udlo=1.0 (render=False, premium=False, ultra_premium=False)
+2026-06-30 14:20:47,667 | INFO     | src.ebay_scraper_client | ScraperAPI search for 'Contour Next 70' returned 0 parsed listing(s).
+2026-06-30 14:20:47,668 | INFO     | src.filter | Filter for 'Contour Next 70': 0/0 listing(s) qualified.
+2026-06-30 14:20:48,668 | INFO     | src.pipeline | Scanning rule 30/39 [ebay]: keyword='ReliOn Prime 100', max_price=4.00
+2026-06-30 14:20:48,668 | INFO     | src.ebay_scraper_client | ScraperAPI fetching eBay search for keyword='ReliOn Prime 100'
+2026-06-30 14:20:48,668 | INFO     | src.scraperapi_fetch | ScraperAPI fetching https://www.ebay.com/sch/i.html?_nkw=ReliOn+Prime+100&_sacat=0&_udhi=4.0&_udlo=1.0 (render=False, premium=False, ultra_premium=False)
+2026-06-30 14:21:03,306 | INFO     | src.ebay_scraper_client | ScraperAPI search for 'ReliOn Prime 100' returned 50 parsed listing(s).
+2026-06-30 14:21:03,307 | INFO     | src.filter | Filter for 'ReliOn Prime 100': 0/50 listing(s) qualified.
+2026-06-30 14:21:04,307 | INFO     | src.pipeline | Scanning rule 31/39 [ebay]: keyword='ReliOn Prime 50', max_price=2.00
+2026-06-30 14:21:04,307 | INFO     | src.ebay_scraper_client | ScraperAPI fetching eBay search for keyword='ReliOn Prime 50'
+2026-06-30 14:21:04,307 | INFO     | src.scraperapi_fetch | ScraperAPI fetching https://www.ebay.com/sch/i.html?_nkw=ReliOn+Prime+50&_sacat=0&_udhi=2.0&_udlo=1.0 (render=False, premium=False, ultra_premium=False)
+2026-06-30 14:21:09,680 | INFO     | src.ebay_scraper_client | ScraperAPI search for 'ReliOn Prime 50' returned 50 parsed listing(s).
+2026-06-30 14:21:09,681 | INFO     | src.filter | Filter for 'ReliOn Prime 50': 0/50 listing(s) qualified.
+2026-06-30 14:21:10,681 | INFO     | src.pipeline | Scanning rule 32/39 [ebay]: keyword='Precision Neo 50', max_price=2.00
+2026-06-30 14:21:10,682 | INFO     | src.ebay_scraper_client | ScraperAPI fetching eBay search for keyword='Precision Neo 50'
+2026-06-30 14:21:10,682 | INFO     | src.scraperapi_fetch | ScraperAPI fetching https://www.ebay.com/sch/i.html?_nkw=Precision+Neo+50&_sacat=0&_udhi=2.0&_udlo=1.0 (render=False, premium=False, ultra_premium=False)
+2026-06-30 14:21:13,953 | INFO     | src.ebay_scraper_client | ScraperAPI search for 'Precision Neo 50' returned 50 parsed listing(s).
+2026-06-30 14:21:13,954 | INFO     | src.filter | Filter for 'Precision Neo 50': 0/50 listing(s) qualified.
+2026-06-30 14:21:13,955 | INFO     | src.pipeline | Scan complete — rules=8/39 fetched=222 qualified=2 skipped_seen=0 alerts=2 capped=0 errors=0

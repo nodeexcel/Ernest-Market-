@@ -47,13 +47,19 @@ class HistoryStore:
             json.dump(payload, handle, indent=2)
             handle.write("\n")
 
+    @staticmethod
+    def _to_record(entry: dict[str, Any]) -> HistoryRecord:
+        """Drop internal persistence keys (e.g. ``_running``) before building a record."""
+        clean = {key: value for key, value in entry.items() if not key.startswith("_")}
+        return HistoryRecord(**clean)
+
     def list_entries(self) -> list[HistoryRecord]:
-        return [HistoryRecord(**entry) for entry in self._load()]
+        return [self._to_record(entry) for entry in self._load()]
 
     def get(self, entry_id: str) -> HistoryRecord | None:
         for entry in self._load():
             if entry.get("id") == entry_id:
-                return HistoryRecord(**entry)
+                return self._to_record(entry)
         return None
 
     def add_running(self, mode: Literal["full", "dry_run"]) -> str:
