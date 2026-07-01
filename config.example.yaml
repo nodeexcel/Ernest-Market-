@@ -11,6 +11,18 @@ rules:
       - "short dated"
       - "empty"
       - "for parts"
+      - "box only"
+      - "overpatch"
+      - "silicone case"
+      - "glass protector"
+      - "screen protector"
+      - "sticker"
+      - "decal"
+      - "patch"
+      - "accessory"
+      - "accessories only"
+      - "case only"
+      - "cover only"
 
   - keyword: "Omnipod 5"
     max_price: 81

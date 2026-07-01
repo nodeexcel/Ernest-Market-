@@ -1,256 +1,296 @@
+# Buy rules aligned with Test Strip Kingz official payout price list.
+# max_price = client payout (alert only when listing price is at or below this).
+
 rules:
+  # --- DEXCOM & CGMS ---
   - keyword: "Dexcom G6 sensors"
-    max_price: 85
+    max_price: 117.50
     min_price: 15
     match_in: title
-    exclude_words: &medical_excludes
+    exclude_words: &standard_excludes
       - "expired"
       - "opened"
       - "damaged"
       - "short dated"
       - "empty"
       - "for parts"
-
-  - keyword: "Dexcom G6 transmitter"
-    max_price: 40
-    min_price: 10
-    match_in: title
-    exclude_words: *medical_excludes
-
-  - keyword: "Dexcom G7 sensor"
-    max_price: 27
-    min_price: 8
-    match_in: title
-    exclude_words: *medical_excludes
-
-  - keyword: "Dexcom G7 receiver"
-    max_price: 52
-    min_price: 15
-    match_in: title
-    exclude_words: *medical_excludes
-
-  - keyword: "Dexcom Stelo"
-    max_price: 20
-    min_price: 5
-    match_in: title
-    exclude_words: *medical_excludes
-
-  - keyword: "Libre 3 sensor"
-    max_price: 22
-    min_price: 5
-    match_in: title
-    exclude_words: *medical_excludes
-
-  - keyword: "Libre 2 sensor"
-    max_price: 20
-    min_price: 5
-    match_in: title
-    exclude_words: *medical_excludes
-
-  - keyword: "Freestyle Libre 14 day"
-    max_price: 20
-    min_price: 5
-    match_in: title
-    exclude_words: *medical_excludes
-
-  - keyword: "Omnipod 5"
-    max_price: 81
-    min_price: 25
-    match_in: title
-    exclude_words: &omnipod_excludes
-      - "expired"
-      - "opened"
-      - "damaged"
-      - "short dated"
-      - "empty"
-      - "for parts"
+      - "box only"
+      - "empty box"
+      - "manual only"
+      - "instructions only"
+      - "dummy"
+      - "training"
+      - "display only"
+      - "prop"
+      - "replica"
+      - "overpatch"
+      - "over patch"
+      - "overpatches"
+      - "skin grip"
+      - "grip tape"
+      - "adhesive patch"
+      - "sensor patch"
+      - "patch cover"
+      - "patch only"
+      - "patches only"
+      - "patch pack"
+      - "patch"
+      - "adhesive"
+      - "overlay"
+      - "adhesive overlay"
+      - "tape only"
       - "sticker"
       - "stickers"
       - "decal"
       - "decal skin"
-      - "patch"
-      - "adhesive"
-      - "overlay"
-      - "dummy"
-      - "training"
-      - "box only"
+      - "skin wrap"
+      - "vinyl wrap"
+      - "skin"
+      - "silicone case"
+      - "silicone cover"
+      - "silicone sleeve"
+      - "silicone band"
+      - "silicone skin"
+      - "silicone protector"
+      - "silicone"
+      - "phone case"
+      - "case only"
+      - "cover only"
+      - "protector only"
+      - "glass protector"
+      - "tempered glass"
+      - "screen protector"
+      - "screen guard"
+      - "protective film"
+      - "lens protector"
+      - "protector"
+      - "case"
+      - "cover"
+      - "watch band"
+      - "arm band"
+      - "band only"
+      - "strap only"
+      - "holder only"
+      - "mount only"
+      - "cradle"
+      - "lanyard"
+      - "pouch only"
+      - "carry case"
+      - "travel case"
+      - "accessory"
+      - "accessories"
+      - "accessories only"
+      - "replacement cover"
+      - "replacement band"
+      - "charger only"
+      - "cable only"
+      - "insert only"
 
-  - keyword: "Omnipod Dash"
-    max_price: 52
-    min_price: 20
+  - keyword: "Dexcom G6 transmitter"
+    max_price: 55.00
+    min_price: 10
     match_in: title
-    exclude_words: *omnipod_excludes
+    exclude_words: *standard_excludes
 
-  - keyword: "Omnipod Dash 10"
-    max_price: 79
+  - keyword: "Dexcom G7 sensor"
+    max_price: 37.00
+    min_price: 8
+    match_in: title
+    exclude_words: *standard_excludes
+
+  - keyword: "Dexcom G7 receiver"
+    max_price: 72.50
+    min_price: 15
+    match_in: title
+    exclude_words: *standard_excludes
+
+  - keyword: "Dexcom Stelo"
+    max_price: 27.50
+    min_price: 5
+    match_in: title
+    exclude_words: *standard_excludes
+
+  - keyword: "Libre 3 sensor"
+    max_price: 30.00
+    min_price: 5
+    match_in: title
+    exclude_words: *standard_excludes
+
+  - keyword: "Libre 2 sensor"
+    max_price: 27.50
+    min_price: 5
+    match_in: title
+    exclude_words: *standard_excludes
+
+  - keyword: "Freestyle Libre 14 day"
+    max_price: 27.50
+    min_price: 5
+    match_in: title
+    exclude_words: *standard_excludes
+
+  # --- OMNIPOD & PUMP SUPPLIES ---
+  - keyword: "Omnipod 5"
+    max_price: 112.50
     min_price: 25
     match_in: title
-    exclude_words: *omnipod_excludes
+    exclude_words: *standard_excludes
+
+  - keyword: "Omnipod Dash"
+    max_price: 72.50
+    min_price: 20
+    match_in: title
+    exclude_words: *standard_excludes
+
+  - keyword: "Omnipod Dash 10"
+    max_price: 110.00
+    min_price: 25
+    match_in: title
+    exclude_words: *standard_excludes
 
   - keyword: "Mio Advance MMT-242A"
-    max_price: 20
+    max_price: 27.50
     min_price: 5
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
-  - keyword: "Medtronic Mio Advance"
-    max_price: 20
-    min_price: 5
-    match_in: title
-    exclude_words: *medical_excludes
-
+  # --- ACCU-CHEK TEST STRIPS ---
   - keyword: "Accu-Chek Aviva Plus 100"
-    max_price: 23
+    max_price: 32.00
     min_price: 5
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
   - keyword: "Accu-Chek Aviva Plus 50"
-    max_price: 13
+    max_price: 17.50
     min_price: 3
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
-  - keyword: "OneTouch Ultra Blue 100"
-    max_price: 24
+  - keyword: "Accu-Chek Smartview 100"
+    max_price: 33.50
     min_price: 5
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
-  - keyword: "OneTouch Ultra Blue 50"
-    max_price: 13
+  - keyword: "Accu-Chek Smartview 50"
+    max_price: 17.50
     min_price: 3
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
-  - keyword: "OneTouch Verio 100"
-    max_price: 24
-    min_price: 5
-    match_in: title
-    exclude_words: *medical_excludes
-
-  - keyword: "OneTouch Verio 50"
-    max_price: 13
-    min_price: 3
-    match_in: title
-    exclude_words: *medical_excludes
-
-  - keyword: "Accu-Chek Guide 100"
-    max_price: 20
-    min_price: 5
-    match_in: title
-    exclude_words: *medical_excludes
-
-  - keyword: "Accu-Chek Guide 50"
-    max_price: 12
-    min_price: 3
-    match_in: title
-    exclude_words: *medical_excludes
-
+  # --- FREESTYLE & CONTOUR TEST STRIPS ---
   - keyword: "FreeStyle Lite 100"
-    max_price: 16
+    max_price: 22.50
     min_price: 4
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
   - keyword: "FreeStyle Lite 50"
-    max_price: 11
+    max_price: 15.00
     min_price: 3
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
-  - keyword: "FreeStyle test strips 100"
-    max_price: 11
+  - keyword: "FreeStyle Regular 100"
+    max_price: 15.00
     min_price: 3
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
-  - keyword: "FreeStyle test strips 50"
-    max_price: 7
+  - keyword: "FreeStyle Regular 50"
+    max_price: 10.00
     min_price: 2
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
   - keyword: "Contour test strips 100"
-    max_price: 19
+    max_price: 27.00
     min_price: 5
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
   - keyword: "Contour Next 100"
-    max_price: 12
+    max_price: 17.00
     min_price: 3
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
   - keyword: "Contour Next 50"
-    max_price: 6
+    max_price: 8.00
     min_price: 2
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
   - keyword: "Contour Next 70"
-    max_price: 4
+    max_price: 5.00
     min_price: 1
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
+  # --- RELION & GENERIC ---
   - keyword: "ReliOn Prime 100"
-    max_price: 4
+    max_price: 5.00
     min_price: 1
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
   - keyword: "ReliOn Prime 50"
-    max_price: 2
+    max_price: 2.50
     min_price: 1
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
+
+  - keyword: "ReliOn Prime 25"
+    max_price: 1.00
+    min_price: 1
+    match_in: title
+    exclude_words: *standard_excludes
 
   - keyword: "Precision Neo 50"
-    max_price: 2
+    max_price: 3.00
     min_price: 1
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
   - keyword: "Precision Neo 25"
-    max_price: 1
+    max_price: 1.50
     min_price: 1
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
+  # --- LANCETS, METERS & PEN NEEDLES ---
   - keyword: "BD pen needles"
-    max_price: 9
+    max_price: 12.50
     min_price: 2
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
   - keyword: "glucose meter"
-    max_price: 5
+    max_price: 7.50
     min_price: 1
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
   - keyword: "OneTouch Delica lancets"
-    max_price: 2
+    max_price: 2.50
     min_price: 1
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
   - keyword: "Softclix lancets"
-    max_price: 2
+    max_price: 2.50
     min_price: 1
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
   - keyword: "Microlet lancets"
-    max_price: 1
+    max_price: 2.00
     min_price: 1
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
 
   - keyword: "FreeStyle lancets"
-    max_price: 1
+    max_price: 2.00
     min_price: 1
     match_in: title
-    exclude_words: *medical_excludes
+    exclude_words: *standard_excludes
