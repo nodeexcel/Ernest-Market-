@@ -9,8 +9,29 @@ from enum import Enum
 
 from src.config_loader import BuyRule
 from src.listing import Listing
+from src.pricing import effective_max_price
 
 logger = logging.getLogger(__name__)
+
+# eBay condition labels and title phrases that are not factory-sealed retail boxes.
+_REJECTED_CONDITION_PHRASES = frozenset(
+    {
+        "open box",
+        "pre-owned",
+        "pre owned",
+        "preowned",
+        "used",
+        "for parts",
+        "refurbished",
+        "seller refurbished",
+        "certified refurbished",
+        "heavily used",
+        "acceptable",
+        "damaged",
+        "not working",
+        "not functional",
+    }
+)
 
 
 class RejectReason(str, Enum):
@@ -18,6 +39,7 @@ class RejectReason(str, Enum):
     PRICE_TOO_LOW = "price_below_min"
     PRICE_TOO_HIGH = "price_above_max"
     EXCLUDED_WORD = "excluded_word"
+    BAD_CONDITION = "condition_not_acceptable"
     WRONG_RULE = "wrong_search_rule"
 
 
@@ -51,15 +73,33 @@ def _contains_excluded_word(text: str, exclude_words: list[str]) -> str | None:
     return None
 
 
-def evaluate_listing(listing: Listing, rule: BuyRule) -> FilterDecision:
+def _condition_is_rejected(condition: str, title: str) -> bool:
+    for field in (condition, title):
+        normalized = _normalize(field)
+        if not normalized:
+            continue
+        for phrase in _REJECTED_CONDITION_PHRASES:
+            if phrase in normalized:
+                return True
+    return False
+
+
+def evaluate_listing(
+    listing: Listing,
+    rule: BuyRule,
+    *,
+    max_price_tolerance_percent: float = 0.0,
+) -> FilterDecision:
     """Evaluate a single listing and return an accept/reject decision with reason."""
     if listing.keyword != rule.keyword:
         return FilterDecision(listing, False, RejectReason.WRONG_RULE)
 
+    price_cap = effective_max_price(rule.max_price, max_price_tolerance_percent)
+
     if listing.price < rule.min_price:
         return FilterDecision(listing, False, RejectReason.PRICE_TOO_LOW)
 
-    if listing.price > rule.max_price:
+    if listing.price > price_cap:
         return FilterDecision(listing, False, RejectReason.PRICE_TOO_HIGH)
 
     search_text = listing.title
@@ -69,6 +109,9 @@ def evaluate_listing(listing: Listing, rule: BuyRule) -> FilterDecision:
     if not _keyword_matches(search_text, rule.keyword):
         return FilterDecision(listing, False, RejectReason.KEYWORD_MISMATCH)
 
+    if _condition_is_rejected(listing.condition, listing.title):
+        return FilterDecision(listing, False, RejectReason.BAD_CONDITION)
+
     excluded = _contains_excluded_word(search_text, rule.exclude_words)
     if excluded is not None:
         return FilterDecision(listing, False, RejectReason.EXCLUDED_WORD)
@@ -76,14 +119,36 @@ def evaluate_listing(listing: Listing, rule: BuyRule) -> FilterDecision:
     return FilterDecision(listing, True)
 
 
-def matches_rule(listing: Listing, rule: BuyRule) -> bool:
+def matches_rule(
+    listing: Listing,
+    rule: BuyRule,
+    *,
+    max_price_tolerance_percent: float = 0.0,
+) -> bool:
     """Return True when a listing satisfies keyword, price window, and exclude filters."""
-    return evaluate_listing(listing, rule).accepted
+    return evaluate_listing(
+        listing,
+        rule,
+        max_price_tolerance_percent=max_price_tolerance_percent,
+    ).accepted
 
 
-def filter_listings(listings: list[Listing], rule: BuyRule) -> list[Listing]:
+def filter_listings(
+    listings: list[Listing],
+    rule: BuyRule,
+    *,
+    max_price_tolerance_percent: float = 0.0,
+) -> list[Listing]:
     """Filter a batch of listings for a single rule."""
-    matched = [listing for listing in listings if matches_rule(listing, rule)]
+    matched = [
+        listing
+        for listing in listings
+        if matches_rule(
+            listing,
+            rule,
+            max_price_tolerance_percent=max_price_tolerance_percent,
+        )
+    ]
     logger.info(
         "Filter for %r: %d/%d listing(s) qualified.",
         rule.keyword,
@@ -96,9 +161,18 @@ def filter_listings(listings: list[Listing], rule: BuyRule) -> list[Listing]:
 def filter_listings_with_report(
     listings: list[Listing],
     rule: BuyRule,
+    *,
+    max_price_tolerance_percent: float = 0.0,
 ) -> tuple[list[Listing], list[FilterDecision]]:
     """Filter listings and return both matches and full decision report."""
-    decisions = [evaluate_listing(listing, rule) for listing in listings]
+    decisions = [
+        evaluate_listing(
+            listing,
+            rule,
+            max_price_tolerance_percent=max_price_tolerance_percent,
+        )
+        for listing in listings
+    ]
     matched = [decision.listing for decision in decisions if decision.accepted]
     logger.info(
         "Filter for %r: %d/%d listing(s) qualified.",

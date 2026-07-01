@@ -57,6 +57,7 @@ def get_overview() -> DashboardOverview:
         poll_interval_minutes=settings.poll_interval_minutes,
         rules_per_run=settings.rules_per_run,
         max_alerts_per_run=settings.max_alerts_per_run,
+        max_price_tolerance_percent=settings.max_price_tolerance_percent,
         processing_status=scan_status["status"],
         last_stats=last_stats,
     )

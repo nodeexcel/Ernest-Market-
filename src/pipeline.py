@@ -11,6 +11,7 @@ from src.filter import filter_listings
 from src.listing import Listing
 from src.marketplace_factory import create_marketplace_router
 from src.notifier_telegram import TelegramNotifier
+from src.pricing import effective_max_price
 from src.rule_batch import RuleBatchManager
 from src.settings import Settings
 from src.sheets_logger import SheetsLogger
@@ -105,13 +106,18 @@ class ScanPipeline:
         for index, rule in enumerate(selection.rules):
             stats.rules_scanned += 1
             rule_number = (selection.start_index + index) % selection.total_rules + 1
+            price_cap = effective_max_price(
+                rule.max_price,
+                self._settings.max_price_tolerance_percent,
+            )
             logger.info(
-                "Scanning rule %d/%d [%s]: keyword=%r, max_price=%.2f",
+                "Scanning rule %d/%d [%s]: keyword=%r, list_price=%.2f, alert_cap=%.2f",
                 rule_number,
                 selection.total_rules,
                 rule.marketplace,
                 rule.keyword,
                 rule.max_price,
+                price_cap,
             )
 
             try:
@@ -126,7 +132,11 @@ class ScanPipeline:
                 continue
 
             stats.listings_fetched += len(listings)
-            qualified = filter_listings(listings, rule)
+            qualified = filter_listings(
+                listings,
+                rule,
+                max_price_tolerance_percent=self._settings.max_price_tolerance_percent,
+            )
             stats.listings_qualified += len(qualified)
 
             for listing in qualified:
@@ -163,5 +173,5 @@ class ScanPipeline:
         logger.info("Running Telegram connectivity check...")
         self._telegram.send_test_message()
         logger.info("Running Google Sheets connectivity check...")
-        self._sheets.append_test_row()
+        self._sheets.verify_connection()
         logger.info("Connectivity checks passed.")

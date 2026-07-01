@@ -1,5 +1,6 @@
 # Buy rules aligned with Test Strip Kingz official payout price list.
-# max_price = client payout (alert only when listing price is at or below this).
+# max_price = client payout from Test Strip Kingz list.
+# Alerts allow up to MAX_PRICE_TOLERANCE_PERCENT above list price (default 10 in .env).
 
 rules:
   # --- DEXCOM & CGMS ---
@@ -23,6 +24,17 @@ rules:
       - "display only"
       - "prop"
       - "replica"
+      - "open box"
+      - "pre-owned"
+      - "pre owned"
+      - "preowned"
+      - "sensor cover"
+      - "sensor covers"
+      - "waterproof"
+      - "sweatproof"
+      - "adhesive patches"
+      - "compatible with"
+      - "decal sticker"
       - "overpatch"
       - "over patch"
       - "overpatches"

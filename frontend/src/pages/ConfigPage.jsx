@@ -93,6 +93,7 @@ export default function ConfigPage() {
             <Setting label="Marketplace" value={settings.ebay_marketplace_id} />
             <Setting label="Rules / Run" value={settings.rules_per_run} />
             <Setting label="Alert Cap" value={settings.max_alerts_per_run} />
+            <Setting label="Price Buffer" value={`${settings.max_price_tolerance_percent}%`} />
             <Setting label="Poll Interval" value={`${settings.poll_interval_minutes} min`} />
             <Setting label="Telegram" value={settings.telegram_configured ? 'Connected' : 'Missing'} />
             <Setting label="Google Sheets" value={settings.google_sheets_configured ? 'Connected' : 'Missing'} />

@@ -10,6 +10,7 @@ from src.config_loader import AppConfig, BuyRule
 from src.filter import FilterDecision, filter_listings_with_report
 from src.listing import Listing
 from src.marketplace_factory import create_marketplace_router
+from src.pricing import effective_max_price
 from src.rule_batch import RuleBatchManager
 from src.settings import Settings
 from src.state import SeenState
@@ -73,11 +74,16 @@ class FilterScanPipeline:
         for index, rule in enumerate(selection.rules):
             result = RuleScanResult(rule=rule)
             stats.rules_scanned += 1
+            price_cap = effective_max_price(
+                rule.max_price,
+                self._settings.max_price_tolerance_percent,
+            )
             logger.info(
-                "Scanning rule [%s]: keyword=%r, max_price=%.2f",
+                "Scanning rule [%s]: keyword=%r, list_price=%.2f, alert_cap=%.2f",
                 rule.marketplace,
                 rule.keyword,
                 rule.max_price,
+                price_cap,
             )
 
             try:
@@ -96,7 +102,11 @@ class FilterScanPipeline:
             result.fetched = len(listings)
             stats.listings_fetched += len(listings)
 
-            qualified, decisions = filter_listings_with_report(listings, rule)
+            qualified, decisions = filter_listings_with_report(
+                listings,
+                rule,
+                max_price_tolerance_percent=self._settings.max_price_tolerance_percent,
+            )
             result.qualified = len(qualified)
             result.rejected = [d for d in decisions if not d.accepted]
             stats.listings_qualified += len(qualified)

@@ -11,6 +11,7 @@ import requests
 from src.config_loader import BuyRule
 from src.ebay_auth import EbayAuthClient, EbayAuthError
 from src.listing import Listing
+from src.pricing import effective_max_price
 from src.settings import EbaySettings
 
 logger = logging.getLogger(__name__)
@@ -49,17 +50,24 @@ class EbayClient:
         }
 
     @staticmethod
-    def _build_price_filter(rule: BuyRule) -> str:
+    def _build_price_filter(rule: BuyRule, price_cap: float) -> str:
         if rule.min_price > 0:
-            return f"price:[{rule.min_price}..{rule.max_price}],priceCurrency:USD"
-        return f"price:[..{rule.max_price}],priceCurrency:USD"
+            return f"price:[{rule.min_price}..{price_cap}],priceCurrency:USD"
+        return f"price:[..{price_cap}],priceCurrency:USD"
 
-    def _build_params(self, rule: BuyRule, limit: int, offset: int) -> dict[str, str | int]:
+    def _build_params(
+        self,
+        rule: BuyRule,
+        limit: int,
+        offset: int,
+        *,
+        price_cap: float,
+    ) -> dict[str, str | int]:
         return {
             "q": rule.keyword,
             "limit": limit,
             "offset": offset,
-            "filter": self._build_price_filter(rule),
+            "filter": self._build_price_filter(rule, price_cap),
         }
 
     def _request_search(
@@ -68,8 +76,10 @@ class EbayClient:
         rule: BuyRule,
         limit: int,
         offset: int,
+        *,
+        price_cap: float,
     ) -> dict[str, Any]:
-        params = self._build_params(rule, limit, offset)
+        params = self._build_params(rule, limit, offset, price_cap=price_cap)
         response = self._session.get(
             self._search_url,
             headers=self._headers(access_token),
@@ -123,17 +133,30 @@ class EbayClient:
             marketplace="ebay",
         )
 
-    def search_rule(self, rule: BuyRule, max_results: int = DEFAULT_LIMIT) -> list[Listing]:
+    def search_rule(
+        self,
+        rule: BuyRule,
+        max_results: int = DEFAULT_LIMIT,
+        *,
+        max_price_tolerance_percent: float = 0.0,
+    ) -> list[Listing]:
         """Fetch listings for a single buy rule."""
         listings: list[Listing] = []
         offset = 0
         limit = min(max_results, MAX_LIMIT)
+        price_cap = effective_max_price(rule.max_price, max_price_tolerance_percent)
         access_token = self._auth.get_access_token()
         retried_auth = False
 
         while len(listings) < max_results:
             try:
-                payload = self._request_search(access_token, rule, limit, offset)
+                payload = self._request_search(
+                    access_token,
+                    rule,
+                    limit,
+                    offset,
+                    price_cap=price_cap,
+                )
             except EbayAuthError:
                 if retried_auth:
                     raise
@@ -172,5 +195,5 @@ class EbayClient:
 
     def debug_search_url(self, rule: BuyRule, limit: int = 10) -> str:
         """Return a human-readable search URL for manual debugging."""
-        params = self._build_params(rule, limit=limit, offset=0)
+        params = self._build_params(rule, limit=limit, offset=0, price_cap=rule.max_price)
         return f"{self._search_url}?{urlencode(params)}"

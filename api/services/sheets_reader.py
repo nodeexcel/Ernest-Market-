@@ -93,10 +93,23 @@ class SheetsReader:
             if not any(cell.strip() for cell in row):
                 continue
             parsed = self._parse_row(row)
-            if parsed and parsed["item_id"] != "TEST":
+            if parsed and self._is_valid_deal_row(parsed):
                 deals.append(parsed)
         deals.reverse()
         return deals
+
+    @staticmethod
+    def _is_valid_deal_row(parsed: dict[str, Any]) -> bool:
+        item_id = str(parsed.get("item_id", "")).strip()
+        keyword = str(parsed.get("keyword", "")).strip().lower()
+        title = str(parsed.get("title", "")).strip().lower()
+        if not item_id or item_id.upper() == "TEST":
+            return False
+        if keyword in {"keyword", "marketplace"} and title in {"title", "test"}:
+            return False
+        if title == "ernest market setup test":
+            return False
+        return True
 
     def export_status(self) -> dict[str, Any]:
         try:

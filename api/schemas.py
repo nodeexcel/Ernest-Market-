@@ -47,6 +47,7 @@ class DashboardOverview(BaseModel):
     poll_interval_minutes: int
     rules_per_run: int
     max_alerts_per_run: int
+    max_price_tolerance_percent: float
     processing_status: Literal["idle", "running", "completed", "failed"]
     last_stats: ScanStatsResponse | None = None
 
@@ -95,6 +96,7 @@ class AppSettingsResponse(BaseModel):
     poll_interval_minutes: int
     rules_per_run: int
     max_alerts_per_run: int
+    max_price_tolerance_percent: float
     rule_search_delay_seconds: float
     ebay_backend: str
     ebay_marketplace_id: str

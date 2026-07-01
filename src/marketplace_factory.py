@@ -20,6 +20,7 @@ class MarketplaceRouter:
     """Dispatch search requests to eBay."""
 
     def __init__(self, settings: Settings) -> None:
+        self._settings = settings
         self._ebay = create_ebay_client(settings)
 
     def search_rule(self, rule: BuyRule, max_results: int = DEFAULT_LIMIT) -> list[Listing]:
@@ -27,7 +28,11 @@ class MarketplaceRouter:
             raise RuntimeError(
                 f"Unsupported marketplace {rule.marketplace!r}. This project only supports eBay."
             )
-        return self._ebay.search_rule(rule, max_results=max_results)
+        return self._ebay.search_rule(
+            rule,
+            max_results=max_results,
+            max_price_tolerance_percent=self._settings.max_price_tolerance_percent,
+        )
 
     def debug_search_url(self, rule: BuyRule, limit: int = 10) -> str:
         return self._ebay.debug_search_url(rule, limit=limit)

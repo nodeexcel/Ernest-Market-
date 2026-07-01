@@ -128,6 +128,13 @@ class SheetsLogger:
         worksheet.append_row(row, value_input_option="USER_ENTERED")
         logger.info("Google Sheet row appended for item %s.", listing.item_id)
 
+    def verify_connection(self) -> None:
+        """Confirm the configured spreadsheet is reachable without writing a test row."""
+        self._get_worksheet()
+        if self._header_format is None:
+            raise SheetsLoggerError("Google Sheet headers could not be initialized.")
+        logger.info("Google Sheet connection verified.")
+
     def append_test_row(self) -> None:
         worksheet = self._get_worksheet()
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")

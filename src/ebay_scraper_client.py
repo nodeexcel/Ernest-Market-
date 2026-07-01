@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 from src.config_loader import BuyRule
 from src.ebay_client import DEFAULT_LIMIT
 from src.listing import Listing
+from src.pricing import effective_max_price
 from src.scraperapi_fetch import ScraperApiError, fetch_html
 
 logger = logging.getLogger(__name__)
@@ -39,11 +40,12 @@ class EbayScraperClient:
         self._session = session or requests.Session()
 
     @staticmethod
-    def build_ebay_search_url(rule: BuyRule) -> str:
+    def build_ebay_search_url(rule: BuyRule, *, max_price_tolerance_percent: float = 0.0) -> str:
+        price_cap = effective_max_price(rule.max_price, max_price_tolerance_percent)
         params: dict[str, str | float | int] = {
             "_nkw": rule.keyword,
             "_sacat": 0,
-            "_udhi": rule.max_price,
+            "_udhi": price_cap,
         }
         if rule.min_price > 0:
             params["_udlo"] = rule.min_price
@@ -172,9 +174,18 @@ class EbayScraperClient:
 
         return listings
 
-    def search_rule(self, rule: BuyRule, max_results: int = DEFAULT_LIMIT) -> list[Listing]:
+    def search_rule(
+        self,
+        rule: BuyRule,
+        max_results: int = DEFAULT_LIMIT,
+        *,
+        max_price_tolerance_percent: float = 0.0,
+    ) -> list[Listing]:
         """Fetch and parse eBay listings for a buy rule via ScraperAPI."""
-        target_url = self.build_ebay_search_url(rule)
+        target_url = self.build_ebay_search_url(
+            rule,
+            max_price_tolerance_percent=max_price_tolerance_percent,
+        )
         logger.info("ScraperAPI fetching eBay search for keyword=%r", rule.keyword)
         html = self._fetch_html(target_url)
         listings = self._parse_listings(html, rule.keyword, max_results)

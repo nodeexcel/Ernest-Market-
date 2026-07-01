@@ -26,7 +26,7 @@ def _listing(
         price=price,
         currency="USD",
         url=f"https://www.ebay.com/itm/{item_id}",
-        condition="Used",
+        condition="Brand New",
         keyword=keyword,
     )
 
