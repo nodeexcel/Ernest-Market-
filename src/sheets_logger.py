@@ -50,6 +50,8 @@ class SheetsLogger:
         self._settings = settings
         self._worksheet: gspread.Worksheet | None = None
         self._header_format: HeaderFormat | None = None
+        self._known_item_ids: set[str] = set()
+        self._item_ids_loaded = False
 
     def _get_worksheet(self) -> gspread.Worksheet:
         if self._worksheet is not None:
@@ -121,11 +123,46 @@ class SheetsLogger:
             listing.condition,
         ]
 
+    def _item_id_column_index(self) -> int:
+        if self._header_format == "full":
+            return 8
+        return 7
+
+    def _normalize_item_id(self, value: str) -> str:
+        return value.strip()
+
+    def _ensure_item_id_cache(self, worksheet: gspread.Worksheet) -> None:
+        if self._item_ids_loaded:
+            return
+
+        item_col = self._item_id_column_index()
+        column_values = worksheet.col_values(item_col)
+        self._known_item_ids = {
+            normalized
+            for normalized in (self._normalize_item_id(raw) for raw in column_values[1:])
+            if normalized
+        }
+        self._item_ids_loaded = True
+        logger.info(
+            "Loaded %d existing item ID(s) from Google Sheet for dedupe.",
+            len(self._known_item_ids),
+        )
+
     def append_listing(self, listing: Listing, matched_keyword: str) -> None:
         worksheet = self._get_worksheet()
+        self._ensure_item_id_cache(worksheet)
+        item_id = self._normalize_item_id(listing.item_id)
+        if item_id in self._known_item_ids:
+            logger.info(
+                "Skipping Google Sheet append for existing item ID %s.",
+                listing.item_id,
+            )
+            return
+
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
         row = self._listing_row(listing, matched_keyword, timestamp)
         worksheet.append_row(row, value_input_option="USER_ENTERED")
+        self._known_item_ids.add(item_id)
         logger.info("Google Sheet row appended for item %s.", listing.item_id)
 
     def verify_connection(self) -> None:
