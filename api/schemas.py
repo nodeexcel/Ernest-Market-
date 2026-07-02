@@ -97,6 +97,8 @@ class AppSettingsResponse(BaseModel):
     rules_per_run: int
     max_alerts_per_run: int
     max_price_tolerance_percent: float
+    ebay_us_only: bool
+    ebay_buy_it_now_only: bool
     rule_search_delay_seconds: float
     ebay_backend: str
     ebay_marketplace_id: str

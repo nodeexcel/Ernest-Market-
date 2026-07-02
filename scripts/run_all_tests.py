@@ -204,6 +204,7 @@ def main() -> int:
         ("test_filter.py", "Filter logic (offline)"),
         ("test_accessory_filters.py", "Accessory exclude filters (offline)"),
         ("test_condition_and_pricing.py", "Condition + 10% price buffer (offline)"),
+        ("test_ebay_search_filters.py", "US-only + Buy It Now filters (offline)"),
         ("test_state.py", "Dedupe state (offline)"),
         ("test_rule_batch.py", "Rule batch rotation (offline)"),
         ("test_telegram_retry.py", "Telegram 429 parsing (offline)"),

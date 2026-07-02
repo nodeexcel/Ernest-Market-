@@ -19,6 +19,10 @@ class EbaySearchClient(Protocol):
 def create_ebay_client(settings: EbaySettings) -> EbaySearchClient:
     """Return the configured eBay search backend."""
     if settings.ebay_backend == "scraperapi":
-        return EbayScraperClient(scraperapi_key=settings.scraperapi_key or "")
+        return EbayScraperClient(
+            scraperapi_key=settings.scraperapi_key or "",
+            us_only=settings.ebay_us_only,
+            buy_it_now_only=settings.ebay_buy_it_now_only,
+        )
     auth = EbayAuthClient(settings)
     return EbayClient(settings, auth)

@@ -4,21 +4,19 @@ from __future__ import annotations
 
 import logging
 import re
-from urllib.parse import urlencode
 
 import requests
 from bs4 import BeautifulSoup
 
 from src.config_loader import BuyRule
 from src.ebay_client import DEFAULT_LIMIT
+from src.ebay_search_filters import build_scraper_search_url
 from src.listing import Listing
-from src.pricing import effective_max_price
 from src.scraperapi_fetch import ScraperApiError, fetch_html
 
 logger = logging.getLogger(__name__)
 
 SCRAPERAPI_ENDPOINT = "https://api.scraperapi.com"
-EBAY_SEARCH_BASE = "https://www.ebay.com/sch/i.html"
 REQUEST_TIMEOUT_SECONDS = 90
 
 
@@ -33,23 +31,45 @@ class EbayScraperClient:
         self,
         scraperapi_key: str,
         session: requests.Session | None = None,
+        *,
+        us_only: bool = True,
+        buy_it_now_only: bool = True,
     ) -> None:
         if not scraperapi_key.strip():
             raise EbayScraperError("SCRAPERAPI_KEY is required when EBAY_BACKEND=scraperapi.")
         self._api_key = scraperapi_key.strip()
         self._session = session or requests.Session()
+        self._us_only = us_only
+        self._buy_it_now_only = buy_it_now_only
+
+    def build_ebay_search_url(
+        self,
+        rule: BuyRule,
+        *,
+        max_price_tolerance_percent: float = 0.0,
+    ) -> str:
+        return build_scraper_search_url(
+            rule,
+            max_price_tolerance_percent=max_price_tolerance_percent,
+            us_only=self._us_only,
+            buy_it_now_only=self._buy_it_now_only,
+        )
 
     @staticmethod
-    def build_ebay_search_url(rule: BuyRule, *, max_price_tolerance_percent: float = 0.0) -> str:
-        price_cap = effective_max_price(rule.max_price, max_price_tolerance_percent)
-        params: dict[str, str | float | int] = {
-            "_nkw": rule.keyword,
-            "_sacat": 0,
-            "_udhi": price_cap,
-        }
-        if rule.min_price > 0:
-            params["_udlo"] = rule.min_price
-        return f"{EBAY_SEARCH_BASE}?{urlencode(params)}"
+    def build_ebay_search_url_static(
+        rule: BuyRule,
+        *,
+        max_price_tolerance_percent: float = 0.0,
+        us_only: bool = True,
+        buy_it_now_only: bool = True,
+    ) -> str:
+        """Build a search URL without a client instance (for tests)."""
+        return build_scraper_search_url(
+            rule,
+            max_price_tolerance_percent=max_price_tolerance_percent,
+            us_only=us_only,
+            buy_it_now_only=buy_it_now_only,
+        )
 
     def _fetch_html(self, target_url: str) -> str:
         try:

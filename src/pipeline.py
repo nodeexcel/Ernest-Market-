@@ -136,6 +136,7 @@ class ScanPipeline:
                 listings,
                 rule,
                 max_price_tolerance_percent=self._settings.max_price_tolerance_percent,
+                us_listings_only=self._settings.ebay_us_only,
             )
             stats.listings_qualified += len(qualified)
 

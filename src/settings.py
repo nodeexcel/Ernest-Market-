@@ -33,6 +33,8 @@ class EbaySettings:
     rules_per_run: int
     rule_search_delay_seconds: float
     max_price_tolerance_percent: float
+    ebay_us_only: bool
+    ebay_buy_it_now_only: bool
 
     @property
     def ebay_api_base(self) -> str:
@@ -103,6 +105,17 @@ def _optional_nonneg_int(name: str, default: int) -> int:
     return value
 
 
+def _optional_bool(name: str, default: bool) -> bool:
+    raw = os.getenv(name, "").strip().lower()
+    if not raw:
+        return default
+    if raw in {"1", "true", "yes", "on"}:
+        return True
+    if raw in {"0", "false", "no", "off"}:
+        return False
+    raise SettingsError(f"{name} must be a boolean (true/false), got {raw!r}")
+
+
 def _optional_float(name: str, default: float, *, minimum: float = 0.0) -> float:
     raw = os.getenv(name, "").strip()
     if not raw:
@@ -167,6 +180,8 @@ def load_ebay_settings(env_file: str | Path | None = ".env") -> EbaySettings:
         rules_per_run=_optional_nonneg_int("RULES_PER_RUN", 8),
         rule_search_delay_seconds=_optional_float("RULE_SEARCH_DELAY_SECONDS", 1.0),
         max_price_tolerance_percent=_optional_float("MAX_PRICE_TOLERANCE_PERCENT", 10.0),
+        ebay_us_only=_optional_bool("EBAY_US_ONLY", True),
+        ebay_buy_it_now_only=_optional_bool("EBAY_BUY_IT_NOW_ONLY", True),
     )
 
 
@@ -193,6 +208,8 @@ def load_settings(env_file: str | Path | None = ".env") -> Settings:
         rules_per_run=ebay.rules_per_run,
         rule_search_delay_seconds=ebay.rule_search_delay_seconds,
         max_price_tolerance_percent=ebay.max_price_tolerance_percent,
+        ebay_us_only=ebay.ebay_us_only,
+        ebay_buy_it_now_only=ebay.ebay_buy_it_now_only,
         telegram_bot_token=_require("TELEGRAM_BOT_TOKEN"),
         telegram_channel_id=_require("TELEGRAM_CHANNEL_ID"),
         telegram_alert_delay_seconds=_optional_float("TELEGRAM_ALERT_DELAY_SECONDS", 1.5),

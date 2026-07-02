@@ -10,6 +10,7 @@ import requests
 
 from src.config_loader import BuyRule
 from src.ebay_auth import EbayAuthClient, EbayAuthError
+from src.ebay_search_filters import build_browse_api_filter
 from src.listing import Listing
 from src.pricing import effective_max_price
 from src.settings import EbaySettings
@@ -49,11 +50,13 @@ class EbayClient:
             "X-EBAY-C-MARKETPLACE-ID": self._settings.ebay_marketplace_id,
         }
 
-    @staticmethod
-    def _build_price_filter(rule: BuyRule, price_cap: float) -> str:
-        if rule.min_price > 0:
-            return f"price:[{rule.min_price}..{price_cap}],priceCurrency:USD"
-        return f"price:[..{price_cap}],priceCurrency:USD"
+    def _build_search_filter(self, rule: BuyRule, price_cap: float) -> str:
+        return build_browse_api_filter(
+            rule,
+            price_cap,
+            us_only=self._settings.ebay_us_only,
+            buy_it_now_only=self._settings.ebay_buy_it_now_only,
+        )
 
     def _build_params(
         self,
@@ -67,7 +70,7 @@ class EbayClient:
             "q": rule.keyword,
             "limit": limit,
             "offset": offset,
-            "filter": self._build_price_filter(rule, price_cap),
+            "filter": self._build_search_filter(rule, price_cap),
         }
 
     def _request_search(

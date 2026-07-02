@@ -53,6 +53,8 @@ def get_app_settings() -> AppSettingsResponse:
         rules_per_run=settings.rules_per_run,
         max_alerts_per_run=settings.max_alerts_per_run,
         max_price_tolerance_percent=settings.max_price_tolerance_percent,
+        ebay_us_only=settings.ebay_us_only,
+        ebay_buy_it_now_only=settings.ebay_buy_it_now_only,
         rule_search_delay_seconds=settings.rule_search_delay_seconds,
         ebay_backend=settings.ebay_backend,
         ebay_marketplace_id=settings.ebay_marketplace_id,

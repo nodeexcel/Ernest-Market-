@@ -9,6 +9,7 @@ from enum import Enum
 
 from src.config_loader import BuyRule
 from src.listing import Listing
+from src.ebay_search_filters import title_suggests_international
 from src.pricing import effective_max_price
 
 logger = logging.getLogger(__name__)
@@ -40,6 +41,7 @@ class RejectReason(str, Enum):
     PRICE_TOO_HIGH = "price_above_max"
     EXCLUDED_WORD = "excluded_word"
     BAD_CONDITION = "condition_not_acceptable"
+    INTERNATIONAL_LISTING = "international_listing"
     WRONG_RULE = "wrong_search_rule"
 
 
@@ -89,6 +91,7 @@ def evaluate_listing(
     rule: BuyRule,
     *,
     max_price_tolerance_percent: float = 0.0,
+    us_listings_only: bool = True,
 ) -> FilterDecision:
     """Evaluate a single listing and return an accept/reject decision with reason."""
     if listing.keyword != rule.keyword:
@@ -112,6 +115,9 @@ def evaluate_listing(
     if _condition_is_rejected(listing.condition, listing.title):
         return FilterDecision(listing, False, RejectReason.BAD_CONDITION)
 
+    if us_listings_only and title_suggests_international(search_text):
+        return FilterDecision(listing, False, RejectReason.INTERNATIONAL_LISTING)
+
     excluded = _contains_excluded_word(search_text, rule.exclude_words)
     if excluded is not None:
         return FilterDecision(listing, False, RejectReason.EXCLUDED_WORD)
@@ -124,12 +130,14 @@ def matches_rule(
     rule: BuyRule,
     *,
     max_price_tolerance_percent: float = 0.0,
+    us_listings_only: bool = True,
 ) -> bool:
     """Return True when a listing satisfies keyword, price window, and exclude filters."""
     return evaluate_listing(
         listing,
         rule,
         max_price_tolerance_percent=max_price_tolerance_percent,
+        us_listings_only=us_listings_only,
     ).accepted
 
 
@@ -138,6 +146,7 @@ def filter_listings(
     rule: BuyRule,
     *,
     max_price_tolerance_percent: float = 0.0,
+    us_listings_only: bool = True,
 ) -> list[Listing]:
     """Filter a batch of listings for a single rule."""
     matched = [
@@ -147,6 +156,7 @@ def filter_listings(
             listing,
             rule,
             max_price_tolerance_percent=max_price_tolerance_percent,
+            us_listings_only=us_listings_only,
         )
     ]
     logger.info(
@@ -163,6 +173,7 @@ def filter_listings_with_report(
     rule: BuyRule,
     *,
     max_price_tolerance_percent: float = 0.0,
+    us_listings_only: bool = True,
 ) -> tuple[list[Listing], list[FilterDecision]]:
     """Filter listings and return both matches and full decision report."""
     decisions = [
@@ -170,6 +181,7 @@ def filter_listings_with_report(
             listing,
             rule,
             max_price_tolerance_percent=max_price_tolerance_percent,
+            us_listings_only=us_listings_only,
         )
         for listing in listings
     ]
