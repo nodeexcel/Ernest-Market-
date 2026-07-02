@@ -9,7 +9,6 @@ import requests
 from bs4 import BeautifulSoup
 
 from src.config_loader import BuyRule
-from src.ebay_client import DEFAULT_LIMIT
 from src.ebay_search_filters import build_scraper_search_url
 from src.listing import Listing
 from src.scraperapi_fetch import ScraperApiError, fetch_html
@@ -34,6 +33,7 @@ class EbayScraperClient:
         *,
         us_only: bool = True,
         buy_it_now_only: bool = True,
+        search_default_limit: int = 100,
     ) -> None:
         if not scraperapi_key.strip():
             raise EbayScraperError("SCRAPERAPI_KEY is required when EBAY_BACKEND=scraperapi.")
@@ -41,6 +41,7 @@ class EbayScraperClient:
         self._session = session or requests.Session()
         self._us_only = us_only
         self._buy_it_now_only = buy_it_now_only
+        self._search_default_limit = search_default_limit
 
     def build_ebay_search_url(
         self,
@@ -197,11 +198,13 @@ class EbayScraperClient:
     def search_rule(
         self,
         rule: BuyRule,
-        max_results: int = DEFAULT_LIMIT,
+        max_results: int | None = None,
         *,
         max_price_tolerance_percent: float = 0.0,
     ) -> list[Listing]:
         """Fetch and parse eBay listings for a buy rule via ScraperAPI."""
+        if max_results is None:
+            max_results = self._search_default_limit
         target_url = self.build_ebay_search_url(
             rule,
             max_price_tolerance_percent=max_price_tolerance_percent,

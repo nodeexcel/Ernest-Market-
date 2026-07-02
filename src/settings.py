@@ -35,6 +35,8 @@ class EbaySettings:
     max_price_tolerance_percent: float
     ebay_us_only: bool
     ebay_buy_it_now_only: bool
+    ebay_search_default_limit: int
+    ebay_search_max_limit: int
 
     @property
     def ebay_api_base(self) -> str:
@@ -129,6 +131,22 @@ def _optional_float(name: str, default: float, *, minimum: float = 0.0) -> float
     return value
 
 
+def _load_ebay_search_limits() -> tuple[int, int]:
+    """Browse API page size defaults (eBay allows up to 200 per request)."""
+    default_limit = _optional_int("EBAY_SEARCH_DEFAULT_LIMIT", 100, minimum=1)
+    max_limit = _optional_int("EBAY_SEARCH_MAX_LIMIT", 200, minimum=1)
+    if max_limit > 200:
+        raise SettingsError(
+            f"EBAY_SEARCH_MAX_LIMIT must be <= 200 (eBay Browse API cap), got {max_limit}"
+        )
+    if default_limit > max_limit:
+        raise SettingsError(
+            f"EBAY_SEARCH_DEFAULT_LIMIT ({default_limit}) must be <= "
+            f"EBAY_SEARCH_MAX_LIMIT ({max_limit})"
+        )
+    return default_limit, max_limit
+
+
 def _load_common_paths() -> tuple[Path, Path, Path, Path, str, int]:
     config_path = Path(os.getenv("CONFIG_PATH", "./config.yaml"))
     data_dir = Path(os.getenv("DATA_DIR", "./data"))
@@ -165,6 +183,8 @@ def load_ebay_settings(env_file: str | Path | None = ".env") -> EbaySettings:
         ebay_client_id = _require("EBAY_CLIENT_ID")
         ebay_client_secret = _require("EBAY_CLIENT_SECRET")
 
+    ebay_search_default_limit, ebay_search_max_limit = _load_ebay_search_limits()
+
     return EbaySettings(
         ebay_backend=ebay_backend,
         scraperapi_key=scraperapi_key,
@@ -182,6 +202,8 @@ def load_ebay_settings(env_file: str | Path | None = ".env") -> EbaySettings:
         max_price_tolerance_percent=_optional_float("MAX_PRICE_TOLERANCE_PERCENT", 10.0),
         ebay_us_only=_optional_bool("EBAY_US_ONLY", True),
         ebay_buy_it_now_only=_optional_bool("EBAY_BUY_IT_NOW_ONLY", True),
+        ebay_search_default_limit=ebay_search_default_limit,
+        ebay_search_max_limit=ebay_search_max_limit,
     )
 
 
@@ -210,6 +232,8 @@ def load_settings(env_file: str | Path | None = ".env") -> Settings:
         max_price_tolerance_percent=ebay.max_price_tolerance_percent,
         ebay_us_only=ebay.ebay_us_only,
         ebay_buy_it_now_only=ebay.ebay_buy_it_now_only,
+        ebay_search_default_limit=ebay.ebay_search_default_limit,
+        ebay_search_max_limit=ebay.ebay_search_max_limit,
         telegram_bot_token=_require("TELEGRAM_BOT_TOKEN"),
         telegram_channel_id=_require("TELEGRAM_CHANNEL_ID"),
         telegram_alert_delay_seconds=_optional_float("TELEGRAM_ALERT_DELAY_SECONDS", 1.5),

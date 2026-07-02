@@ -18,8 +18,6 @@ from src.settings import EbaySettings
 logger = logging.getLogger(__name__)
 
 SEARCH_ENDPOINT = "/buy/browse/v1/item_summary/search"
-DEFAULT_LIMIT = 50
-MAX_LIMIT = 200
 
 
 class EbayApiError(RuntimeError):
@@ -139,14 +137,16 @@ class EbayClient:
     def search_rule(
         self,
         rule: BuyRule,
-        max_results: int = DEFAULT_LIMIT,
+        max_results: int | None = None,
         *,
         max_price_tolerance_percent: float = 0.0,
     ) -> list[Listing]:
         """Fetch listings for a single buy rule."""
+        if max_results is None:
+            max_results = self._settings.ebay_search_default_limit
         listings: list[Listing] = []
         offset = 0
-        limit = min(max_results, MAX_LIMIT)
+        limit = min(max_results, self._settings.ebay_search_max_limit)
         price_cap = effective_max_price(rule.max_price, max_price_tolerance_percent)
         access_token = self._auth.get_access_token()
         retried_auth = False
